@@ -1,0 +1,36 @@
+version: '3'
+services:
+  php-apache:
+    container_name: php-apache
+    build:
+      context: ./php
+    ports:
+        - '8080:80'
+    volumes:
+      - ./src:/var/www/laravel_docker
+      - ./apache/default.conf:/etc/apache2/sites-enabled/000-default.conf
+    depends_on:
+      - db
+    networks:
+      - laravel-net
+
+  db:
+    container_name: laravel-db
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABSE: laravel
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '3306:3306'
+    volumes:
+      - laravel-db:/var/lib/mysql
+    networks:
+      - laravel-net
+
+networks:
+  laravel-net:
+
+volumes:
+  laravel-db:
